@@ -2,6 +2,19 @@ console.log('notes.js');
 
 const fs = require('fs');
 
+const fetchNotes = () => {
+  try {
+    var notesString = fs.readFileSync('notes-data.json');
+    return JSON.parse(notesString);
+  } catch(e) {
+    return [];
+  }
+};
+
+const saveNotes = (notes) => {
+  fs.writeFile('notes-data.json', JSON.stringify(notes), () => {});
+};
+
 let addNote = (title, body) => {
 //  console.log('Adding note: ', title, body);
   var notes = [];
@@ -9,20 +22,15 @@ let addNote = (title, body) => {
     title,
     body
   };
-  try {
-    var notesString = fs.readFileSync('notes-data.json');
-    notes = JSON.parse(notesString);
-  } catch(err) {
-
-  }
+  notes = fetchNotes();
   var duplicates = notes.filter(note => note.title === title);
-  console.log(duplicates);
-  console.log(duplicates.length);
+
   if(duplicates.length === 0) {
     notes.push(note);
-    console.log(notes);
-    fs.writeFileSync('notes-data.json', JSON.stringify(notes));
-  } else {console.log('There exist duplicates.');}
+    saveNotes(notes);
+  } else {
+    console.log('There exist duplicates.');
+  }
 };
 
 let getAll = () => {
